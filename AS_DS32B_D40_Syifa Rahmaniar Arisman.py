@@ -45,57 +45,40 @@ st.markdown("This dashboard provides an overview of sales analysis")
 
 
 # --- Dashboard ---
-st.title("📊 Sales Dashboard")
+st.header("Key Visualizations")
 
-if not df.empty:
-    st.write("Data loaded successfully from your Excel file!")
-
-    # --- Data Overview ---
-    st.subheader("Data Overview")
-    st.write(f"Number of rows: **{df.shape[0]}** | Number of columns: **{df.shape[1]}**")
-    st.dataframe(df.head())
-
-    # --- Data Summary ---
-    st.subheader("Data Summary")
-    st.dataframe(df.describe())
-
-    # --- Key Visualizations ---
-    st.header("Key Visualizations")
-    if 'order_date' in df.columns and 'sales' in df.columns:
-        st.subheader("Monthly Sales Trend")
-        df_monthly_sales = df.set_index('order_date')['sales'].resample('M').sum().reset_index()
-
-        # Create Matplotlib figure and axes
-        fig, ax = plt.subplots(figsize=(10, 6))
-        ax.plot(df_monthly_sales['order_date'], df_monthly_sales['sales'], marker='o')
-        ax.set_title('Total Sales per Month')
-        ax.set_xlabel('Month')
-        ax.set_ylabel('Total Sales')
-        ax.grid(True)
-        plt.xticks(rotation=45)
-        plt.tight_layout()
-
-        st.pyplot(fig)
-    else:
-        st.info("Columns 'order_date' or 'sales' not found for sales trend visualization.")
-
-    # --- Sales by Category ---
-    if 'category' in df.columns and 'sales' in df.columns:
-        st.subheader("Sales by Category")
-        df_category_sales = df.groupby('category')['sales'].sum().reset_index().sort_values(by='sales', ascending=False)
-        
-        fig_bar, ax_bar = plt.subplots(figsize=(10, 6))
-        ax_bar.bar(df_category_sales['category'], df_category_sales['sales'])
-        ax_bar.set_title('Total Sales by Category')
-        ax_bar.set_xlabel('Category')
-        ax_bar.set_ylabel('Total Sales')
-        plt.xticks(rotation=45, ha='right')
-        plt.tight_layout()
-        st.pyplot(fig_bar)
+# --- Monthly Sales Trend ---
+if 'order_date' in df.columns and 'sales' in df.columns:
+    st.subheader("Monthly Sales Trend")
+    df_monthly_sales = df.set_index('order_date')['sales'].resample('M').sum().reset_index()
 
 
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(df_monthly_sales['order_date'], df_monthly_sales['sales'], marker='o')
+    ax.set_title('Total Sales per Month')
+    ax.set_xlabel('Month')
+    ax.set_ylabel('Total Sales')
+    ax.grid(True)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    st.pyplot(fig) 
 else:
-    st.warning("No data loaded. Please check your file path or Excel file.")
+    st.info("Columns 'order_date' or 'sales' not found for sales trend visualization.")
+
+# --- Sales by Category ---
+if 'category' in df.columns and 'sales' in df.columns:
+    st.subheader("Sales by Category")
+    df_category_sales = df.groupby('category')['sales'].sum().reset_index().sort_values(by='sales', ascending=False)
+    
+    fig_bar, ax_bar = plt.subplots(figsize=(10, 6))
+    ax_bar.bar(df_category_sales['category'], df_category_sales['sales'])
+    ax_bar.set_title('Total Sales by Category')
+    ax_bar.set_xlabel('Category')
+    ax_bar.set_ylabel('Total Sales')
+
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    st.pyplot(fig_bar)
 
 # --- Footer ---
 st.markdown("---")
